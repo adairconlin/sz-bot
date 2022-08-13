@@ -8,7 +8,7 @@ const client = new Client({
     intents: [ GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent ] 
 });
 
-// COMMAND PATHING
+//COMMAND PATHING
 client.commands = new Collection;
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
