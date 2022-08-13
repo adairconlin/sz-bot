@@ -1,7 +1,5 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const mongoose = require("mongoose");
-const { Clone } = require("./schemas");
 const { Client, Collection, GatewayIntentBits} = require("discord.js");
 require("dotenv").config();
 
@@ -51,43 +49,5 @@ client.on("interactionCreate", async interaction => {
     }
 });
 
-
-const clone = msg => {
-    //const getCloneChannelId = await Clone.find({ id: 1 });
-    const userInfo = msg.author.username;
-
-    if(msg.attachments.size > 0) {
-        for(let i = 0; i < msg.attachments.size; i++) {
-            const imgArr = [];
-            msg.attachments.forEach(el => imgArr.push(el.url));
-            if(i == 0) {
-                const testEmbed = new MessageEmbed()
-                    .setColor("DARK_GOLD")
-                    .setTitle(userInfo)
-                    .setImage(imgArr[0])
-                    .setDescription(msg.content)
-                    .setTimestamp();
-                                        
-                client.channels.cache.get(bufferCloneId).send({ embeds: [testEmbed] });
-            } else {
-                const testEmbed = new MessageEmbed()
-                    .setColor("DARK_GOLD")
-                    .setTitle(userInfo)
-                    .setImage(imgArr[i])
-                    .setTimestamp();
-
-                client.channels.cache.get(bufferCloneId).send({ embeds: [testEmbed] });
-            }
-        }
-    } else {
-        const testEmbed = new MessageEmbed()
-            .setColor("DARK_GOLD")
-            .setTitle(userInfo)
-            .setDescription(msg.content)
-            .setTimestamp();
-
-        client.channels.cache.get(bufferCloneId).send({ embeds: [testEmbed] });
-    }
-}
 
 client.login(process.env.TOKEN);
