@@ -14,7 +14,6 @@ const cloneCommandFilter = async (cmd, channelId) => {
     } else {
         checkCommand(cmd, channelId);
     }
-
 }
 
 const checkCommand = (cmd, id) => {

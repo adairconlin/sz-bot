@@ -1,9 +1,14 @@
 const { Schema, model } = require("mongoose");
 
 const ScanChannelSchema = new Schema({
-    channelIds: {[
-
-    ]}
+    id: {
+        type: Number,
+        required: true
+    },
+    channels: {
+        type: Array,
+        "default": []
+    }
     //eventual inventory ref
 });
 
