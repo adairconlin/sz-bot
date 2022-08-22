@@ -12,6 +12,7 @@
     "discord.js": "^14.2.0",
     "dotenv": "^16.0.1",
     "mongoose": "^6.5.2",
+    "node-fetch": "^2.6.7",
     "nodemon": "^2.0.19"
   },
   "author": "",
