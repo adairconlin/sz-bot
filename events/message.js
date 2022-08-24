@@ -1,6 +1,4 @@
-const { EmbedBuilder } = require("discord.js");
-const { Clone } = require("../schemas");
-const fetch = require('node-fetch');
+const { Clone, ScanChannel, User } = require("../schemas");
 require("dotenv").config();
 
 
@@ -61,15 +59,47 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
+const addToDatabase = async msg => {
+    //await User.deleteMany({});
+    const findUser = await User.find({ discordId: msg.author.id});
+    console.log(findUser);
+    if(!findUser.length) {
+        const newUser = {
+            username: msg.author.username,
+            discordId: msg.author.id,
+            diamondAmt: 3
+        }
+
+        await new User(newUser).save()
+            .then(() => {
+                msg.reply("Welcome to the Lemon Art Database! Here's 3 diamonds <3");
+            })
+    }
+}
+
+
 module.exports = {
     name: "messageCreate",
     async execute(message) {
         if(message.author.bot) return;
 
+        //checking for necessary database events
+        const getScanChannels = await ScanChannel.find({ id: 1 });
+
+        for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
+            if(getScanChannels[0]?.channels[i] === message.channelId) {
+                addToDatabase(message);
+                return;
+            }
+        }
+
+
+        // checking for necessary clone events
         const getCloneId = await Clone.find({ id: 1 });
 
         if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
             cloneMessage(message, getCloneId[0]?.cloneToChannelId);
+            return;
         } else {
             return;
         }
