@@ -1,3 +1,4 @@
-const { cloneCommandFilter } = require("./channel-controllers");
+const { cloneCommandFilter } = require("./clone-controllers");
+const { scanChannelCheck } = require("./scan-controllers");
 
-module.exports = { cloneCommandFilter };
+module.exports = { cloneCommandFilter, scanChannelCheck };
