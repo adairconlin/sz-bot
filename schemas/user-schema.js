@@ -7,8 +7,8 @@ const UserSchema = new Schema({
     discordId: {
         type: String
     },
-    diamondAmt: {
-        type: String
+    pointsAmt: {
+        type: Number
     }
     //eventual inventory ref
 });

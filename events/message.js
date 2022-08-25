@@ -62,17 +62,16 @@ const cloneMessage = async (msg, bufferCloneId) => {
 const addToDatabase = async msg => {
     //await User.deleteMany({});
     const findUser = await User.find({ discordId: msg.author.id});
-    console.log(findUser);
     if(!findUser.length) {
         const newUser = {
             username: msg.author.username,
             discordId: msg.author.id,
-            diamondAmt: 3
+            pointsAmt: 3
         }
 
         await new User(newUser).save()
             .then(() => {
-                msg.reply("Welcome to the Lemon Art Database! Here's 3 diamonds <3");
+                msg.reply("Welcome to the Lemon Art Database! Here's 3 Points <3");
             })
     }
 }
