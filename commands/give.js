@@ -20,9 +20,10 @@ const giveUserPoints = async (id, int) => {
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('give')
-		.setDescription('Specify user you want to give points to.')
-        .addMentionableOption(option => option.setName("mentionable").setDescription("Specify who's points you want to view"))
-        .addIntegerOption(option => option.setName("int").setDescription("Enter the amount of points to give")),
+		.setDescription('Give points to a user!')
+        .addMentionableOption(option => option.setName("mentionable").setDescription("Specify who you want to give points to."))
+        .addIntegerOption(option => option.setName("int").setDescription("Enter the amount of points to give."))
+        .setDefaultMemberPermissions(0),
 	async execute(interaction) {
         const mentionable = interaction.options.getMentionable('mentionable');
         const user = mentionable.user.id;

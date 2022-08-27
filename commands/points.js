@@ -15,7 +15,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('points')
 		.setDescription('View user points. If no user specified, view your own.')
-        .addMentionableOption(option => option.setName("mentionable").setDescription("Specify who's points you want to view")),
+        .addMentionableOption(option => option.setName("mentionable").setDescription("Specify who's points you want to view.")),
 	async execute(interaction) {
         const mentionable = interaction.options.getMentionable('mentionable');
         let user;
