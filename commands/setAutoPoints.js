@@ -34,7 +34,8 @@ module.exports = {
         .addStringOption(option =>
             option.setName("requirement")
                 .setDescription("Require image for points to be rewarded")
-                .addChoices({ name: "Require image posted.", value: "image"})),
+                .addChoices({ name: "Require image posted.", value: "image"}))
+        .setDefaultMemberPermissions(0),
 	async execute(interaction) {
         const channelId = interaction.channelId;
         const int = interaction.options.getInteger("int");

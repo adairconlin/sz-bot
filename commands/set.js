@@ -36,7 +36,7 @@ module.exports = {
             if(int > 1 || int === 0 ) {
                 await interaction.reply(`<@${user}> now has ${int} points!`);
             } else {
-                await interaction.reply(`<@${user} now has 1 point!`);
+                await interaction.reply(`<@${user}> now has 1 point!`);
             }
         } else {
             await interaction.reply(`There was an error.`);

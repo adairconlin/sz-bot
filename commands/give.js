@@ -35,10 +35,10 @@ module.exports = {
             if(int > 1 ) {
                 await interaction.reply(`<@${user}> was rewarded ${int} points!`);
             } else {
-                await interaction.reply(`<@${user} was rewarded 1 point!`);
+                await interaction.reply(`<@${user}> was rewarded 1 point!`);
             }
         } else {
-            await interaction.reply(`@<${user}> does not exist.`);
+            await interaction.reply(`<@${user}> does not exist.`);
         }
 	},
 };
