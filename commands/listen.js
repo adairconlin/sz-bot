@@ -4,8 +4,7 @@ const { cloneCommandFilter } = require("../db-controllers");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('listen')
-		.setDescription('Sets the current channel for the bot to clone from.')
-        .setDefaultMemberPermissions(0),
+		.setDescription('Sets the current channel for the bot to clone from.'),
 	async execute(interaction) {
         cloneCommandFilter("listen", interaction.channelId);
 

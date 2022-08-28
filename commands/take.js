@@ -26,8 +26,7 @@ module.exports = {
 		.setName('take')
 		.setDescription('Take a certain amount of points for a user.')
         .addMentionableOption(option => option.setName("mentionable").setDescription("Specify who's points you want to take away."))
-        .addIntegerOption(option => option.setName("int").setDescription("Enter the amount of points you want to take away."))
-        .setDefaultMemberPermissions(0),
+        .addIntegerOption(option => option.setName("int").setDescription("Enter the amount of points you want to take away.")),
 	async execute(interaction) {
         const mentionable = interaction.options.getMentionable('mentionable');
         const user = mentionable.user.id;
