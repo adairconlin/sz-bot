@@ -81,7 +81,7 @@ module.exports = {
         if(message.author.bot) return;
 
         //checking for necessary database events
-        const getScanChannels = await ScanChannel.find({ id: process.ENV_ID });
+        const getScanChannels = await ScanChannel.find({ id: 1 });
         console.log(getScanChannels);
 
         for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
