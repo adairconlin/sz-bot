@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node deploy-commands.js && nodemon",
-    "build": "node deploy-commands.js"
+    "build": "node deploy-commands.js",
+    "logs": "heroku logs -n 500 -a sketchzone-bot"
   },
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
