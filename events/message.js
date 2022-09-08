@@ -14,39 +14,37 @@ const cloneMessage = async (msg, bufferCloneId) => {
                 avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
             })
             .then(webhook => {
+                //if there are attachments, create an image array
                 if(msg.attachments.size > 0) {
                     let imgArr = [];
                     msg.attachments.forEach(el => imgArr.push(el.url));
-
-                    if(msg.content.length > 0 && msg.attachments.size === 1) {
-                        webhook.send({
-                            content: `${msg.content} + ${imgArr[i]}`,
-                            username: `${msg.author.username}`,
-                            avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
-                        });
-                    } else {
-                        for(let i = 0; i < imgArr.length; i++) {
-                            if(i === 0) {
-                                webhook.send({
-                                    content: `${msg.content}`,
-                                    username: `${msg.author.username}`,
-                                    avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
-                                });
-                                webhook.send({
-                                    content: `${imgArr[i]}`,
-                                    username: `${msg.author.username}`,
-                                    avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
-                                });
-                            } else {
+                    for(let i = 0; i < imgArr.length; i++) {                        
+                        //if there is message content
+                        if(i === 0 && msg.content.length > 0) {
+                            //send the content,
+                            webhook.send({
+                                content: `${msg.content}`,
+                                username: `${msg.author.username}`,
+                                avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
+                            });
+                            //then send the first attachment
                             webhook.send({
                                 content: `${imgArr[i]}`,
                                 username: `${msg.author.username}`,
                                 avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
                             });
-                            }
+                        //if there is no content, loop through attachments
+                        } else {
+                            webhook.send({
+                                content: `${imgArr[i]}`,
+                                username: `${msg.author.username}`,
+                                avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.jpeg`,
+                            });
                         }
                     }
+                //if there is only content, just send the content
                 } else {
+                    // SUCCESS
                     webhook.send({
                         content: `${msg.content}`,
                         username: `${msg.author.username}`,
@@ -68,7 +66,6 @@ const addToDatabase = async msg => {
             discordId: msg.author.id,
             pointsAmt: 3
         }
-
         await new User(newUser).save()
             .then(() => {
                 msg.reply("Welcome to the Lemon Art Database! Here's 3 Points <3");
@@ -83,7 +80,7 @@ module.exports = {
         if(message.author.bot) return;
 
         //checking for necessary database events
-        const getScanChannels = await ScanChannel.find({ id: 1 });
+        const getScanChannels = await ScanChannel.find({ id: process.ENV_ID });
 
         for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
             if(getScanChannels[0]?.channels[i] === message.channelId) {
@@ -92,9 +89,8 @@ module.exports = {
             }
         }
 
-
         // checking for necessary clone events
-        const getCloneId = await Clone.find({ id: 1 });
+        const getCloneId = await Clone.find({ id: process.env.ENV_ID });
 
         if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
             cloneMessage(message, getCloneId[0]?.cloneToChannelId);

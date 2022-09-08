@@ -6,7 +6,7 @@ module.exports = {
 		.setName('clone')
 		.setDescription('Sets the current channel for the bot to clone to.'),
 	async execute(interaction) {
-        cloneCommandFilter("clone", interaction.channelId);
+        cloneCommandFilter("clone", interaction.channelId, 2);
 
 		await interaction.reply('Okay! Cloning to this channel. :-)');
 	},
