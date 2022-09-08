@@ -1,7 +1,6 @@
 const { Clone, ScanChannel, User } = require("../schemas");
 require("dotenv").config();
 
-
 const cloneMessage = async (msg, bufferCloneId) => {
     if(!bufferCloneId) {
         console.log("There is no buffer clone channel set");

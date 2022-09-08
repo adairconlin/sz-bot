@@ -4,7 +4,13 @@ const { User } = require("../schemas");
 const takeUserPoints = async (id, int) => {
     let value;
     if(!int || !id) {
-        value = false;
+        value = "You must select both command options.";
+        return value;
+    }
+
+    const findPoints = await User.findOne({ discordId: id });
+    if(findPoints?.pointsAmt - int < 1) {
+        value = "Users cannot have negative points.";
         return value;
     }
 
@@ -15,8 +21,8 @@ const takeUserPoints = async (id, int) => {
             }
         }
     )
-    .then(() => {value = true;})
-    .catch(error => {value = false; console.log(error);});
+    .then(() => {value = "success";})
+    .catch(error => {value = "There was an error."; console.log(error);});
 
     return value;
 }
@@ -35,14 +41,14 @@ module.exports = {
 
         const response = await takeUserPoints(user, int);
 
-        if(response) {
+        if(response === "success") {
             if(int > 1 || int === 0 ) {
                 await interaction.reply(`<@${user}> has lost ${int} points!`);
             } else {
                 await interaction.reply(`<@${user}> has lost 1 point!`);
             }
         } else {
-            await interaction.reply(`There was an error.`);
+            await interaction.reply(`${response}`);
         }
 	},
 };
