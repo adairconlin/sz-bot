@@ -8,7 +8,7 @@ const getUserPoints = async id => {
         return "This user is not registered.";
     }
 
-    return findUser[0]?.pointsAmt;
+    return findUser[0]?.pointsAvail;
 }
 
 module.exports = {

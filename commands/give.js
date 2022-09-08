@@ -7,7 +7,8 @@ const giveUserPoints = async (id, int) => {
     await User.updateOne({ discordId: id },
         {
             $inc: {
-                pointsAmt: int
+                pointsAmt: int,
+                pointsAvail: int
             }
         }
     )

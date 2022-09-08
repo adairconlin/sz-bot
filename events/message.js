@@ -72,7 +72,6 @@ const addToDatabase = async msg => {
     }
 }
 
-
 module.exports = {
     name: "messageCreate",
     async execute(message) {

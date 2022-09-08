@@ -3,14 +3,14 @@ const { User } = require("../schemas");
 
 const setUserPoints = async (id, int) => {
     let value;
-    if(!int || !id) {
+    if(!int || !id || int < 0) {
         value = false;
         return value;
     }
 
     await User.updateOne({ discordId: id },
         {
-            pointsAmt: int
+            pointsAvail: int
         }
     )
     .then(() => {value = true;})

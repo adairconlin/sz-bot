@@ -9,7 +9,7 @@ const takeUserPoints = async (id, int) => {
     }
 
     const findPoints = await User.findOne({ discordId: id });
-    if(findPoints?.pointsAmt - int < 1) {
+    if(findPoints?.pointsAvail - int < 1) {
         value = "Users cannot have negative points.";
         return value;
     }
@@ -17,7 +17,7 @@ const takeUserPoints = async (id, int) => {
     await User.updateOne({ discordId: id },
         {
             $inc: {
-                pointsAmt: -int
+                pointsAvail: -int
             }
         }
     )
