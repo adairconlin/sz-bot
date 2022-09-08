@@ -59,6 +59,9 @@ const cloneMessage = async (msg, bufferCloneId) => {
 const addToDatabase = async msg => {
     //await User.deleteMany({});
     const findUser = await User.find({ discordId: msg.author.id});
+    console.log("find user");
+    console.log(findUser);
+    
     if(!findUser.length) {
         const newUser = {
             username: msg.author.username,
@@ -82,6 +85,7 @@ module.exports = {
 
         for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
             if(getScanChannels[0]?.channels[i] === message.channelId) {
+                console.log("is a scan channel");
                 addToDatabase(message);
                 return;
             }
