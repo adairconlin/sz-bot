@@ -61,7 +61,7 @@ const addToDatabase = async msg => {
     const findUser = await User.find({ discordId: msg.author.id});
     console.log("find user");
     console.log(findUser);
-    
+
     if(!findUser.length) {
         const newUser = {
             username: msg.author.username,
@@ -82,6 +82,7 @@ module.exports = {
 
         //checking for necessary database events
         const getScanChannels = await ScanChannel.find({ id: process.ENV_ID });
+        console.log(getScanChannels);
 
         for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
             if(getScanChannels[0]?.channels[i] === message.channelId) {
