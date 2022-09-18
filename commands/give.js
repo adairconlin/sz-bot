@@ -12,8 +12,8 @@ const giveUserPoints = async (id, int) => {
             }
         }
     )
-    .then(() => {value = true;})
-    .catch(error => {value = false; console.log(error);});
+    .then(() => { value = true; })
+    .catch(error => { value = false; console.log(error); });
 
     return value;
 }
