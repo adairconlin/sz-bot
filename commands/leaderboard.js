@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
 const { User } = require("../schemas");
+const Pagination = require("customizable-discordjs-pagination");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -7,7 +8,13 @@ module.exports = {
 		.setDescription('View the servers leaderboard!'),
 	async execute(interaction, client) {
         let arr = [];
+        let pages  = [];
         let message = "";
+
+        const buttons = [
+            { label: "Previous", style: ButtonStyle.Primary },
+            { label: "Next", style: ButtonStyle.Primary }
+        ];
         
         await User.find({})
             .sort({ pointsAmt : -1 })
@@ -20,30 +27,49 @@ module.exports = {
                 });
             });
 
-        for(let i = 0; i < arr.length; i++) {
+        for(let i = 0; i < 20; i++) {
             message += (`${i+1}. ${arr[i].name} - ${arr[i].points} pts \n`);
-        };
+        }
 
-        const row = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                .setCustomId("prevLeaderboard")
-                .setLabel("Prev")
-                .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                .setCustomId("nextLeaderboard")
-                .setLabel("Next")
-                .setStyle(ButtonStyle.Primary)
-            );
+        let embed1 = new EmbedBuilder()
+            .setColor("DarkButNotBlack")
+            .setTitle("Leaderboard")
+            .setDescription(message);
+        pages.push(embed1);
+        
+        let count = 21;
+        let embedCount = 2;
+        message = "";
+        while(count < arr.length) {
+            if(count % 20 > 0) {
+                message += `${count}. ${arr[count].name} - ${arr[count].points} pts \n`;
+            } else {
+                message += `${count}. ${arr[count].name} - ${arr[count].points} pts`;
 
-        const embed = new EmbedBuilder()
-                .setColor("DarkButNotBlack")
-                .setTitle("Leaderboard")
-                .setDescription(message);
+                let name = eval("let embed" + embedCount);
+                name = new EmbedBuilder()
+                    .setColor("DarkButNotBlack")
+                    .setTitle("Leaderboard")
+                    .setDescription(message);
+                pages.push(name);
+                embedCount++;
+                message = "";
+            }
 
-        await interaction.reply({ ephemeral: true, embeds: [embed], components: [row] });
+            count++
+        }
 
+        new Pagination()
+            .setCommand(interaction)
+            .setPages(pages)
+            .setButtons(buttons)
+            .setPaginationCollector({ timeout: 120000 })
+            .setFooter({ enable: true })
+            .send();
         // https://stackoverflow.com/questions/68553256/edit-an-embed-on-buttonclick-discord-js
         // await interaction.reply(message);
 	},
 };
+
+// create a page for the first 10 messages,
+// anything over a multiple of 10, create another page
