@@ -41,6 +41,7 @@ module.exports = {
         let count = 21;
         let embedCount = 2;
         message = "";
+        console.log(arr);
 
         while(count < arr.length) {
             if(count === arr.length - 1) {
@@ -56,9 +57,9 @@ module.exports = {
                 embedCount++;
                 message = "";
             } else if(count % 20 > 0) {
-                message += `${count}. ${arr[count].name} - ${arr[count].points} pts \n`;
+                message += `${count}. ${arr[count-1].name} - ${arr[count-1].points} pts \n`;
             } else {
-                message += `${count}. ${arr[count].name} - ${arr[count].points} pts`;
+                message += `${count}. ${arr[count-1].name} - ${arr[count-1].points} pts`;
 
                 let name = eval("let embed" + embedCount);
                 name = new EmbedBuilder()
