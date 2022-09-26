@@ -1,5 +1,6 @@
 // Commands for interacting with channels and users in the database
-const { ScanChannel, User, Clone } = require("../schemas");
+const { ScanChannel, User, Clone, AutoPoints } = require("../schemas");
+const { giveUserPoints } = require("./points-util");
 require("dotenv").config();
 
 const checkForScanChannels = async message => {
@@ -9,6 +10,54 @@ const checkForScanChannels = async message => {
         if(getScanChannels[0]?.channels[i] === message.channelId) {
             addToDatabase(message);
         }
+    }
+}
+
+const checkForCloneChannels = async message => {
+    const getCloneId = await Clone.find({ id: process.env.ENV_ID });
+
+    if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
+        cloneMessage(message, getCloneId[0]?.cloneToChannelId);
+    }
+}
+
+const checkForAutoPointChannels = async message => {
+    const getAutoPointChannels = await AutoPoints.find({ channelId: message.channelId });
+    if(getAutoPointChannels.length) {
+        checkForReq(message, message.author.id, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
+    }
+}
+
+const checkForReq = async (msg, id, pts, rq) => {
+    switch(rq) {
+        case null:
+            rewardUser(msg, id, pts);
+            break;
+        default:
+            if(msg.attachments.size) {
+                rewardUser(msg, id, pts);
+            }
+            break;
+    }
+}
+
+const rewardUser = async (msg, id, pts) => {
+    const response = await giveUserPoints(id, pts);
+
+    switch(typeof response) {
+        case "string":
+            msg.reply(response);
+            break;
+        case "boolean":
+            if(response === true && pts > 1) {
+                await msg.reply(`<@${msg.author.id}> was rewarded ${pts} points!`);
+            } else if(response === true) {
+                await msg.reply(`<@${msg.author.id}> was rewarded 1 point!`);
+            }
+            break;
+        default:
+            await msg.reply("There was an error. Yell at sappy about it.");
+            break;
     }
 }
 
@@ -29,14 +78,6 @@ const addToDatabase = async message => {
             .catch(err => { 
                 console.log(err);
                 message.reply("There was an error adding you to the database. Yell at sappy to add you!!"); });
-    }
-}
-
-const checkForCloneChannels = async message => {
-    const getCloneId = await Clone.find({ id: process.env.ENV_ID });
-
-    if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
-        cloneMessage(message, getCloneId[0]?.cloneToChannelId);
     }
 }
 
@@ -95,4 +136,4 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
-module.exports = { checkForScanChannels, checkForCloneChannels };
+module.exports = { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };

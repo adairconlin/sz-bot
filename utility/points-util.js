@@ -68,9 +68,7 @@ const takeUserPoints = async (id, int) => {
         return "Please define a number of points higher than 0";
     }
 
-    console.log(id);
     const findUser = await User.find({ discordId: id });
-    console.log(findUser.length);
     if(!findUser.length) {
         return "This user is not registered.";
     }
