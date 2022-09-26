@@ -41,7 +41,6 @@ module.exports = {
         let count = 21;
         let embedCount = 2;
         message = "";
-        console.log(arr);
 
         while(count < arr.length) {
             if(count === arr.length - 1) {
