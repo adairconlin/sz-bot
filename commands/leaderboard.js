@@ -45,7 +45,8 @@ module.exports = {
 
         while(count < arr.length) {
             if(count === arr.length - 1) {
-                message += `${count}. ${arr[count].name} - ${arr[count].points} pts`;
+                message += `${count}. ${arr[count-1].name} - ${arr[count-1].points} pts\n`;
+                message += `${count+1}. ${arr[count].name} - ${arr[count].points} pts`;
 
                 let name = eval("let embed" + (embedCount+1));
                 name = new EmbedBuilder()
