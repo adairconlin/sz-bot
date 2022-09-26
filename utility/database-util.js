@@ -28,39 +28,6 @@ const checkForAutoPointChannels = async message => {
     }
 }
 
-const checkForReq = async (msg, id, pts, rq) => {
-    switch(rq) {
-        case null:
-            rewardUser(msg, id, pts);
-            break;
-        default:
-            if(msg.attachments.size) {
-                rewardUser(msg, id, pts);
-            }
-            break;
-    }
-}
-
-const rewardUser = async (msg, id, pts) => {
-    const response = await giveUserPoints(id, pts);
-
-    switch(typeof response) {
-        case "string":
-            msg.reply(response);
-            break;
-        case "boolean":
-            if(response === true && pts > 1) {
-                await msg.reply(`<@${msg.author.id}> was rewarded ${pts} points!`);
-            } else if(response === true) {
-                await msg.reply(`<@${msg.author.id}> was rewarded 1 point!`);
-            }
-            break;
-        default:
-            await msg.reply("There was an error. Yell at sappy about it.");
-            break;
-    }
-}
-
 const addToDatabase = async message => {
     const findUser = await User.find({ discordId: message.author.id});
 
@@ -134,6 +101,40 @@ const cloneMessage = async (msg, bufferCloneId) => {
             .catch(console.error);
         })
         .catch(console.error);
+}
+
+
+const checkForReq = async (msg, id, pts, rq) => {
+    switch(rq) {
+        case null:
+            rewardUser(msg, id, pts);
+            break;
+        default:
+            if(msg.attachments.size) {
+                rewardUser(msg, id, pts);
+            }
+            break;
+    }
+}
+
+const rewardUser = async (msg, id, pts) => {
+    const response = await giveUserPoints(id, pts);
+
+    switch(typeof response) {
+        case "string":
+            msg.reply(response);
+            break;
+        case "boolean":
+            if(response === true && pts > 1) {
+                await msg.reply(`<@${msg.author.id}> was rewarded ${pts} points!`);
+            } else if(response === true) {
+                await msg.reply(`<@${msg.author.id}> was rewarded 1 point!`);
+            }
+            break;
+        default:
+            await msg.reply("There was an error. Yell at sappy about it.");
+            break;
+    }
 }
 
 module.exports = { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
