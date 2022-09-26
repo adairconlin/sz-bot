@@ -6,7 +6,6 @@ const scanChannelCheck = async newId => {
     //await ScanChannel.deleteMany({});
 
     const result = await ScanChannel.find({ id: process.env.ENV_ID });
-    console.log("/scan result: " + result);
 
     if(!result.length) {
         const newScan = {
@@ -25,7 +24,6 @@ const checkForChannel = async (newId, result) => {
         if(result[0]?.channels[i] === newId) {
             return;
         }
-
         addScanChannel(newId);
     }
 }

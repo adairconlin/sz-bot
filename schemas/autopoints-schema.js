@@ -2,7 +2,8 @@ const { Schema, model } = require("mongoose");
 
 const AutoPointSchema = new Schema({
     channelId: {
-        type: String
+        type: String,
+        unique: true
     },
     repAmt: {
         type: Number
