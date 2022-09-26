@@ -6,7 +6,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('leaderboard')
 		.setDescription('View the servers leaderboard!'),
-	async execute(interaction, client) {
+	async execute(interaction) {
         let arr = [];
         let pages  = [];
         let message = "";
@@ -32,30 +32,44 @@ module.exports = {
         }
 
         let embed1 = new EmbedBuilder()
-            .setColor("DarkButNotBlack")
+            .setColor("Greyple")
             .setTitle("Leaderboard")
-            .setDescription(message);
+            .setDescription(message)
+            .addFields({ name: "━━━━━", value: "*Your high score is different from your available points.*" });
         pages.push(embed1);
         
         let count = 21;
         let embedCount = 2;
         message = "";
+
         while(count < arr.length) {
-            if(count % 20 > 0) {
+            if(count === arr.length - 1) {
+                message += `${count}. ${arr[count].name} - ${arr[count].points} pts`;
+
+                let name = eval("let embed" + (embedCount+1));
+                name = new EmbedBuilder()
+                    .setColor("Greyple")
+                    .setTitle("Leaderboard")
+                    .setDescription(message)
+                    .addFields({ name: "━━━━━", value: "Your high score is different from your available points."});
+                pages.push(name);
+                embedCount++;
+                message = "";
+            } else if(count % 20 > 0) {
                 message += `${count}. ${arr[count].name} - ${arr[count].points} pts \n`;
             } else {
                 message += `${count}. ${arr[count].name} - ${arr[count].points} pts`;
 
                 let name = eval("let embed" + embedCount);
                 name = new EmbedBuilder()
-                    .setColor("DarkButNotBlack")
+                    .setColor("Greyple")
                     .setTitle("Leaderboard")
-                    .setDescription(message);
+                    .setDescription(message)
+                    .addFields({ name: "━━━━━", value: "Your high score is different from your available points."} );
                 pages.push(name);
                 embedCount++;
                 message = "";
             }
-
             count++
         }
 
@@ -66,10 +80,9 @@ module.exports = {
             .setPaginationCollector({ timeout: 120000 })
             .setFooter({ enable: true })
             .send();
-        // https://stackoverflow.com/questions/68553256/edit-an-embed-on-buttonclick-discord-js
-        // await interaction.reply(message);
 	},
 };
 
 // create a page for the first 10 messages,
 // anything over a multiple of 10, create another page
+// for the last name, create an embed with the current message
