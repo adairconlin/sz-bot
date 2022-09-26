@@ -1,3 +1,4 @@
+// Commands for interacting with points in the database
 const { User } = require("../schemas");
 let value;
 
