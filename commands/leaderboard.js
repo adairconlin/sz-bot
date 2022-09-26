@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder,  ButtonStyle, EmbedBuilder } = require("discord.js");
 const { User } = require("../schemas");
 const Pagination = require("customizable-discordjs-pagination");
 
@@ -32,10 +32,10 @@ module.exports = {
         }
 
         let embed1 = new EmbedBuilder()
-            .setColor("Greyple")
-            .setTitle("Leaderboard")
+            .setColor("Yellow")
+            .setTitle("Lemon Art Leaderboard")
             .setDescription(message)
-            .addFields({ name: "━━━━━", value: "*Your high score is different from your available points.*" });
+            .addFields({ name: "━━━━━", value: "*Your leaderboard score is different from your available points.*" });
         pages.push(embed1);
         
         let count = 21;
@@ -48,10 +48,10 @@ module.exports = {
 
                 let name = eval("let embed" + (embedCount+1));
                 name = new EmbedBuilder()
-                    .setColor("Greyple")
-                    .setTitle("Leaderboard")
+                    .setColor("Yellow")
+                    .setTitle("Lemon Art Leaderboard")
                     .setDescription(message)
-                    .addFields({ name: "━━━━━", value: "Your high score is different from your available points."});
+                    .addFields({ name: "━━━━━", value: "Your leaderboard score is different from your available points."});
                 pages.push(name);
                 embedCount++;
                 message = "";
@@ -62,10 +62,10 @@ module.exports = {
 
                 let name = eval("let embed" + embedCount);
                 name = new EmbedBuilder()
-                    .setColor("Greyple")
-                    .setTitle("Leaderboard")
+                    .setColor("Yellow")
+                    .setTitle("Lemon Art Leaderboard")
                     .setDescription(message)
-                    .addFields({ name: "━━━━━", value: "Your high score is different from your available points."} );
+                    .addFields({ name: "━━━━━", value: "Your leaderboard score is different from your available points."} );
                 pages.push(name);
                 embedCount++;
                 message = "";

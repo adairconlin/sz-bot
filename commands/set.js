@@ -1,45 +1,36 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { User } = require("../schemas");
-
-const setUserPoints = async (id, int) => {
-    let value;
-    if(!int || !id || int < 0) {
-        value = false;
-        return value;
-    }
-
-    await User.updateOne({ discordId: id },
-        {
-            pointsAvail: int
-        }
-    )
-    .then(() => {value = true;})
-    .catch(error => {value = false; console.log(error);});
-
-    return value;
-}
+const { setUserPoints } = require("../utility");
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('set')
 		.setDescription('Set a certain amount of points for a user.')
-        .addMentionableOption(option => option.setName("mentionable").setDescription("Specify who's points you want to set."))
-        .addIntegerOption(option => option.setName("int").setDescription("Enter the amount of points for this user.")),
+        .addMentionableOption(option => option.setName("user").setDescription("Specify which users leaderboard score you want to set. (required)"))
+        .addIntegerOption(option => option.setName("points").setDescription("Enter the amount of points for this user. (required)")),
+
 	async execute(interaction) {
-        const mentionable = interaction.options.getMentionable('mentionable');
-        const user = mentionable.user.id;
-        const int = interaction.options.getInteger("int");
+        const userid = interaction.options.getMentionable('user').user.id;
+        const int = interaction.options.getInteger("points");
 
-        const response = await setUserPoints(user, int);
+        const response = await setUserPoints(userid, int);
+        console.log(response);
+        console.log(typeof response);
 
-        if(response) {
-            if(int > 1 || int === 0 ) {
-                await interaction.reply(`<@${user}> now has ${int} points!`);
-            } else {
-                await interaction.reply(`<@${user}> now has 1 point!`);
-            }
-        } else {
-            await interaction.reply(`There was an error.`);
+        switch(typeof response) {
+            case "string":
+                await interaction.reply(response);
+                break;
+            case "boolean":
+                if(response === true) {
+                    if(int > 1 || int === 0 ) {
+                        await interaction.reply(`<@${userid}> now has ${int} points!`);
+                    } else {
+                        await interaction.reply(`<@${userid}> now has 1 point!`);
+                    }
+                }
+                break;
+            default:
+                await interaction.reply(`There was an error. Yell at sappy about it.`);
         }
 	},
 };
