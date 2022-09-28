@@ -38,7 +38,7 @@ const addToDatabase = async message => {
             discordId: message.author.id,
             pointsAmt: 3,
             pointsAvail: 3
-        }
+        };
 
         await new User(newUser).save()
             .then(() => {
@@ -46,7 +46,8 @@ const addToDatabase = async message => {
             })
             .catch(err => { 
                 console.log(err);
-                message.reply("There was an error adding you to the database. Yell at sappy to add you!!"); });
+                //message.reply("There was an error adding you to the database. Yell at sappy to add you!!"); });
+            })
     }
 }
 
