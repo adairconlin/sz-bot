@@ -6,7 +6,8 @@ const UserSchema = new Schema({
     },
     discordId: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     pointsAmt: {
         type: Number

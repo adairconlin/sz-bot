@@ -30,12 +30,14 @@ const checkForAutoPointChannels = async message => {
 
 const addToDatabase = async message => {
     const findUser = await User.find({ discordId: message.author.id});
+    //console.log(findUser);
 
-    if(!findUser.length) {
+    if(!findUser?.length) {
         const newUser = {
             username: message.author.username,
             discordId: message.author.id,
-            pointsAmt: 3
+            pointsAmt: 3,
+            pointsAvail: 3
         }
 
         await new User(newUser).save()

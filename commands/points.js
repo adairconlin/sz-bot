@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { getUserPoints } = require("../utility");
+const { User } = require("../schemas");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,6 +11,9 @@ module.exports = {
 	async execute(interaction) {
         const mentionable = interaction.options.getMentionable('user');
         let userid;
+
+        // const userFind = await User.deleteMany({ discordId: "314766060010078209" });
+        // console.log(userFind);
 
         if(mentionable?.user) {
             userid = mentionable.user.id;
