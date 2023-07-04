@@ -5,10 +5,15 @@ const UserSchema = new Schema({
         type: String
     },
     discordId: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
     },
-    diamondAmt: {
-        type: String
+    pointsAmt: {
+        type: Number
+    },
+    pointsAvail: {
+        type: Number
     }
     //eventual inventory ref
 });

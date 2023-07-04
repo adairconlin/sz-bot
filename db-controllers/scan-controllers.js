@@ -1,14 +1,15 @@
 const { ScanChannel } = require("../schemas");
+require("dotenv").config();
 
 //For checking and setting channels
 const scanChannelCheck = async newId => {
     //await ScanChannel.deleteMany({});
 
-    const result = await ScanChannel.find({ id: 1 });
+    const result = await ScanChannel.find({ id: process.env.ENV_ID });
 
     if(!result.length) {
         const newScan = {
-            id: 1,
+            id: process.env.ENV_ID,
             channels: [newId]
         }
 
@@ -23,13 +24,12 @@ const checkForChannel = async (newId, result) => {
         if(result[0]?.channels[i] === newId) {
             return;
         }
-
         addScanChannel(newId);
     }
 }
 
 const addScanChannel = async newId => {
-    await ScanChannel.updateOne({ id: 1 },
+    await ScanChannel.updateOne({ id: process.env.ENV_ID },
         {
             $push: {
                 channels: newId

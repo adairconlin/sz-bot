@@ -5,10 +5,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node deploy-commands.js && nodemon",
-    "build": "node deploy-commands.js"
+    "build": "node deploy-commands.js",
+    "logs": "heroku logs -n 500 -a sketchzone-bot"
   },
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
+    "customizable-discordjs-pagination": "^2.0.1",
     "discord.js": "^14.2.0",
     "dotenv": "^16.0.1",
     "mongoose": "^6.5.2",
