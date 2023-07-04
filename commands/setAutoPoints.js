@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { checkAutoPointsChannel } = require("../db-controllers");
+require("dotenv").config();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -37,7 +38,7 @@ module.exports = {
                 }
                 break;
             default:
-                await interaction.reply("There was an error. Yell at sappy about it.");
+                await interaction.reply(`There was an error configuring auto points. Please fix this, <@${process.env.SAPPY_ID}>.`);
         }
 	},
 };
