@@ -13,8 +13,6 @@ module.exports = {
         const int = interaction.options.getInteger("points");
 
         const response = await setUserPoints(userid, int);
-        console.log(response);
-        console.log(typeof response);
 
         switch(typeof response) {
             case "string":

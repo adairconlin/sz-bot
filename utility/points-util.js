@@ -50,15 +50,13 @@ const giveUserPoints = async (interaction, user, int) => {
         return "Please define a number of points higher than 0.";
     }
 
-    const findUser = addToDatabase(interaction, user, int); //verify
+    const findUser = addToDatabase(interaction, user, int);
 
     if(!findUser) {
         return "Error in finding or adding user to database. Yell a sappy."
     }
 
-    console.log("findUser:");
-    console.log(findUser); //temp
-    await User.updateOne({ findUser }, //verify
+    await User.updateOne({ findUser },
         {
             $inc: {
                 pointsAmt: int,
