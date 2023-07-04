@@ -1,6 +1,7 @@
 // Commands for interacting with points in the database
 const { User } = require("../schemas");
-const { addToDatabase } = require("./create-user");
+const { addToDatabase } = require("./crud-user");
+require("dotenv").config();
 let value;
 
 const getUserPoints = async id => {
@@ -53,20 +54,11 @@ const giveUserPoints = async (interaction, user, int) => {
     const findUser = addToDatabase(interaction, user, int);
 
     if(!findUser) {
-        return "Error in finding or adding user to database. Yell a sappy."
+        return `Error in finding or adding user to database. Yell at <@${process.env.SAPPY_ID}>.`
+    } else {
+        value = findUser;
     }
-
-    await User.updateOne({ findUser },
-        {
-            $inc: {
-                pointsAmt: int,
-                pointsAvail: int
-            }
-        }
-    )
-        .then(() => { value = true; })
-        .catch(err => { console.log(err); value = false; });
-
+    
     return value;
 }
 
@@ -79,7 +71,7 @@ const takeUserPoints = async (id, int) => {
 
     const findUser = await User.find({ discordId: id });
     if(!findUser.length) {
-        return "This user is not registered."; //add to database
+        return "This user is not registered."; // valid scenario
     }
 
     if(findUser?.pointsAvail - int < 0) {

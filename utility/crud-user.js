@@ -8,12 +8,12 @@ const { User } = require("../schemas");
 const addToDatabase = async (interaction, currentUser, int) => {
     const findUser = await User.find({ discordId: currentUser.id});
     let user;
+    if(!int) {
+        int = 0;
+    }
 
     if(!findUser?.length) {
-        if(!int) {
-            int = 0;
-        }
-
+        console.log("user was not found, and int is: " + int);
         const newUser = {
             username: currentUser.username,
             discordId: currentUser.id,
@@ -22,8 +22,8 @@ const addToDatabase = async (interaction, currentUser, int) => {
         };
 
         await new User(newUser).save()
-            .then(createdUser => {
-                user = createdUser;
+            .then(() => {
+                user = true;
                 interaction.channel.send(`Welcome to the Lemon Art Database, <@${currentUser.id}>! Here's 3 Points <3`);
             })
             .catch(err => { 
@@ -32,7 +32,23 @@ const addToDatabase = async (interaction, currentUser, int) => {
             });
 
     } else {
-        user = findUser;
+        if(int == 0) {
+            console.log("user was found, and int is 0")
+            user = findUser;
+        } else {
+            // give user specified points after verifying that they exist
+            console.log("user was found, and int is: " + int);
+            await User.updateOne( { discordId: currentUser.id },
+                {
+                    $inc: {
+                        pointsAmt: int,
+                        pointsAvail: int
+                    }
+                }
+            )
+        .then(() => { user = true; })
+        .catch(err => { console.log(err); user = false; });
+        }
     }
 
     return user;

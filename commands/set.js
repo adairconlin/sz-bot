@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { setUserPoints } = require("../utility");
+require("dotenv").config();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -28,7 +29,7 @@ module.exports = {
                 }
                 break;
             default:
-                await interaction.reply(`There was an error. Yell at sappy about it.`);
+                await interaction.reply(`There was an error setting points. Please fix this, <@${process.env.SAPPY_ID}>.`);
         }
 	},
 };

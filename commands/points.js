@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { getUserPoints } = require("../utility");
+require("dotenv").config();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -27,7 +28,7 @@ module.exports = {
                 await interaction.reply(`<@${userid}>\n\`Available Points: ${response[0]}\` \n\`Leaderboard Points: ${response[1]}\``);
                 break;
             default:
-                await interaction.reply("There was an error. Yell at sappy about it.");
+                await interaction.reply(`There was an error retrieving points for <@${userid}>. Yell at <@${process.env.SAPPY_ID}> about it.`);
                 break;
         }
 	}

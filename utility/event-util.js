@@ -1,6 +1,6 @@
 // Commands for interacting with channels and users in the database
 const { ScanChannel, Clone, AutoPoints } = require("../schemas");
-const { addToDatabase } = require("./create-user");
+const { addToDatabase } = require("./crud-user");
 const { giveUserPoints } = require("./points-util");
 require("dotenv").config();
 
@@ -25,7 +25,7 @@ const checkForCloneChannels = async message => {
 const checkForAutoPointChannels = async message => {
     const getAutoPointChannels = await AutoPoints.find({ channelId: message.channelId });
     if(getAutoPointChannels.length) {
-        checkForReq(message, message.author.id, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
+        checkForReq(message, getAutoPointChannels[0]);
     }
 }
 
@@ -84,36 +84,35 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
-
-const checkForReq = async (msg, id, pts, rq) => {
-    switch(rq) {
+    const checkForReq = async (msg, req) => {
+    switch(req.requirement) {
         case null:
-            rewardUser(msg, id, pts);
+            rewardUser(msg, msg.author, req.repAmt);
             break;
         default:
             if(msg.attachments.size) {
-                rewardUser(msg, id, pts);
+                rewardUser(msg, msg.author, req.repAmt);
             }
             break;
     }
 }
 
-const rewardUser = async (msg, id, pts) => {
-    const response = await giveUserPoints(id, pts);
+const rewardUser = async (msg, user, pts) => {
+    const response = await giveUserPoints(msg, user, pts);
 
     switch(typeof response) {
         case "string":
-            msg.reply(response);
+            await msg.reply(response);
             break;
         case "boolean":
             if(response === true && pts > 1) {
-                await msg.reply(`<@${msg.author.id}> was rewarded ${pts} points!`);
+                await msg.reply(`<@${user.id}> was rewarded ${pts} points!`);
             } else if(response === true) {
-                await msg.reply(`<@${msg.author.id}> was rewarded 1 point!`);
+                await msg.reply(`<@${user.id}> was rewarded 1 point!`);
             }
             break;
         default:
-            await msg.reply("There was an error. Yell at sappy about it.");
+            await msg.reply(`There was an error rewarding <@${user.id}> ${pts} point(s). Please fix this <@${process.env.SAPPY_ID}>.`);
             break;
     }
 }
