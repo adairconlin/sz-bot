@@ -1,5 +1,6 @@
 // Commands for interacting with channels and users in the database
-const { ScanChannel, User, Clone, AutoPoints } = require("../schemas");
+const { ScanChannel, Clone, AutoPoints } = require("../schemas");
+const { addToDatabase } = require("./create-user");
 const { giveUserPoints } = require("./points-util");
 require("dotenv").config();
 
@@ -8,7 +9,7 @@ const checkForScanChannels = async message => {
 
     for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
         if(getScanChannels[0]?.channels[i] === message.channelId) {
-            addToDatabase(message);
+            addToDatabase(message, message.author);
         }
     }
 }
@@ -25,29 +26,6 @@ const checkForAutoPointChannels = async message => {
     const getAutoPointChannels = await AutoPoints.find({ channelId: message.channelId });
     if(getAutoPointChannels.length) {
         checkForReq(message, message.author.id, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
-    }
-}
-
-const addToDatabase = async message => {
-    const findUser = await User.find({ discordId: message.author.id});
-    //console.log(findUser);
-
-    if(!findUser?.length) {
-        const newUser = {
-            username: message.author.username,
-            discordId: message.author.id,
-            pointsAmt: 3,
-            pointsAvail: 3
-        };
-
-        await new User(newUser).save()
-            .then(() => {
-                message.reply("Welcome to the Lemon Art Database! Here's 3 Points <3");
-            })
-            .catch(err => { 
-                console.log(err);
-                //message.reply("There was an error adding you to the database. Yell at sappy to add you!!"); });
-            })
     }
 }
 
@@ -140,4 +118,4 @@ const rewardUser = async (msg, id, pts) => {
     }
 }
 
-module.exports = { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
+module.exports = { addToDatabase, checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
