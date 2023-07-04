@@ -9,24 +9,24 @@ module.exports = {
         .addIntegerOption(option => option.setName("points").setDescription("Specify the amount of points to give. (required)")),
 
 	async execute(interaction) {
-        const userid = interaction.options.getMentionable('user').user.id;
+        const user = interaction.options.getMentionable('user').user;
         const int = interaction.options.getInteger("points");
 
-        const response = await giveUserPoints(userid, int);
+        const response = await giveUserPoints(interaction, user, int);
 
         switch(typeof response) {
-            case "string":
+            case "string": //error scenario
                 await interaction.reply(response);
                 break;
             case "boolean":
                 if(response === true && int > 1) {
-                    await interaction.reply(`<@${userid}> was rewarded ${int} points!`);
+                    await interaction.reply(`<@${user.id}> was rewarded ${int} points!`);
                 } else if(response === true) {
-                    await interaction.reply(`<@${userid}> was rewarded 1 point!`);
+                    await interaction.reply(`<@${user.id}> was rewarded 1 point!`);
                 }
                 break;
             default:
-                await interaction.reply("There was an error. Yell at sappy about it.");
+                await interaction.reply(`There was an error giving <@${user.id}> points. Yell at sappy about it.`);
         }
-	},
+	}
 };

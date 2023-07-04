@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { getUserPoints } = require("../utility");
-const { User } = require("../schemas");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,13 +11,10 @@ module.exports = {
         const mentionable = interaction.options.getMentionable('user');
         let userid;
 
-        // const userFind = await User.deleteMany({ discordId: "314766060010078209" });
-        // console.log(userFind);
-
         if(mentionable?.user) {
-            userid = mentionable.user.id;
+            userid = mentionable.user.id; // search for mentioned user in command
         } else {
-            userid = interaction.user.id;
+            userid = interaction.user.id; // search for user who sent command
         }
 
         const response = await getUserPoints(userid);
@@ -34,5 +30,5 @@ module.exports = {
                 await interaction.reply("There was an error. Yell at sappy about it.");
                 break;
         }
-	},
+	}
 };
