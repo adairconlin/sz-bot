@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { takeUserPoints } = require("../../utility");
+const { getUser, takePoints } = require("../../utility");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,27 +9,15 @@ module.exports = {
         .addIntegerOption(option => option.setName("points").setDescription("Enter the amount of available points you want to take away."))
         .setDefaultMemberPermissions(0),
 	async execute(interaction) {
-        const userid = interaction.options.getMentionable('user').user.id;
+        const user = interaction.options.getMentionable('user').user;
+        console.log(user);
         const int = interaction.options.getInteger("points");
 
-        const response = await takeUserPoints(userid, int);
+        const userInfo = await getUser(user);
+        const response = await takePoints(userInfo, int);
 
-        switch(typeof response) {
-            case "string":
-                await interaction.reply(response);
-                break;
-            case "boolean":
-                if(response === true) {
-                    if(int > 1 || int === 0 ) {
-                        await interaction.reply(`<@${userid}> has lost ${int} points!`);
-                    } else {
-                        await interaction.reply(`<@${userid}> has lost 1 point!`);
-                    }
-                }
-                break;
-            default:
-                await interaction.reply("There was an error. Yell at sappy about it");
-                break;
+        if(response) {
+            interaction.reply(response);
         }
 	}
 };

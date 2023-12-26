@@ -1,4 +1,8 @@
-const { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels } = require("../utility");
+const { 
+    checkForScanChannels, 
+    checkForCloneChannels, 
+    checkForAutoPointChannels 
+} = require("../utility");
 require("dotenv").config();
 
 module.exports = {

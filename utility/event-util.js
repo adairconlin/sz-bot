@@ -3,7 +3,6 @@ const { ScanChannel, Clone, AutoPoints } = require("../schemas");
 const { getUser, addToDatabase } = require("./user-util");
 const { givePoints } = require("./points-util");
 require("dotenv").config();
-let errorResponse = "There was an issue finding user data. Please let Sappy know so she can fix it. :-)";
 
 const checkForScanChannels = async message => {
     const getScanChannels = await ScanChannel.find({ id: process.env.ENV_ID });
@@ -103,13 +102,7 @@ const rewardUser = async (message, reward, requirement) => {
             break;
     }
 
-    if(response != errorResponse) {
-        const pointResp = response.toString().replace(`\n`, ` was rewarded ${reward} point!\n`);
-        const pointsResp = response.toString().replace(`\n`, ` was rewarded ${reward} points!\n`);
-        return reward > 1 ? pointsResp : pointResp;
-    } else {
-        return errorResponse;
-    }
+    return response;
 }
 
 module.exports = { addToDatabase, checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };

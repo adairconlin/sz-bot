@@ -1,6 +1,5 @@
 // Commands for interacting with points in the database
 const { User } = require("../schemas");
-const { addToDatabase } = require("./user-util");
 let value;
 let errorResponse = "There was an issue finding user data. Please let Sappy know so she can fix it. :-)";
 
@@ -30,7 +29,8 @@ const setPoints = async (user, int) => {
             pointsAmt: int 
         })
         .then(() => {
-            response = `<@${user[0].discordId}> now has ${int} points!`;
+            userPts = [ user[0]?.pointsAvail, int ];
+            response = `<@${user[0].discordId}> now has ${int} points!\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
         })
         .catch(err => { 
             console.log(err); 
@@ -61,7 +61,8 @@ const givePoints = async (user, int) => {
         })
         .then(() => {
             userPts = [ user[0]?.pointsAvail + int, user[0]?.pointsAmt + int ];
-            response = `<@${user[0].discordId}>\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
+            pluralCheck = int > 1 ? "points" : "point"
+            response = `<@${user[0].discordId}> was rewarded ${int} ${pluralCheck}!\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
         })
         .catch(err => { 
             console.log(err); 
@@ -71,33 +72,40 @@ const givePoints = async (user, int) => {
     return response;
 }
 
-const takeUserPoints = async (id, int) => {
-    if(!id || !int) {
-        return "Please define both fields for this command.";
-    } else if(int < 1) {
-        return "Please define a number of points higher than 0.";
+// Used by take.js
+const takePoints = async (user, int) => {
+    let response;
+    if(!int) {
+        return "Please define the point field for this command.";
+    } else if(int < 0) {
+        return "Please define a number of points higher than 0. >:-(";
+    } else if(user == null || user.length < 1) {
+        return errorResponse;
     }
 
-    const findUser = await User.find({ discordId: id });
-    if(!findUser.length) {
-        return "This user is not registered."; //add to database
-    }
-
-    if(findUser?.pointsAvail - int < 0) {
+    if(user[0]?.pointsAvail - int < 0) {
         return "Users cannot have negative points.";
     }
 
-    await User.updateOne({ discordId: id },
+    await User.updateOne({ discordId: user[0].discordId },
         {
             $inc: {
                 pointsAvail: -int
             }
         }
     )
-        .then(() => { value = true })
-        .catch(err => { console.log(err); value = false; });
+        .then(() =>  {
+            userPts = [ user[0]?.pointsAvail - int, user[0]?.pointsAmt - int ];
+            pluralCheck = int > 1 ? "points" : "point";
+            response = `<@${user[0].discordId}> lost ${int} ${pluralCheck}...\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``
+        })
+        .catch(err => { 
+            console.log(err); 
+            response = errorResponse; 
+        });
     
-    return value;
+    return response;
+    
 }
 
-module.exports = { getPoints, setPoints, givePoints, takeUserPoints };
+module.exports = { getPoints, setPoints, givePoints, takePoints };
