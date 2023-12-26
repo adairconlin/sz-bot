@@ -10,7 +10,6 @@ module.exports = {
         .setDefaultMemberPermissions(0),
 	async execute(interaction) {
         const user = interaction.options.getMentionable('user').user;
-        console.log(user);
         const int = interaction.options.getInteger("points");
 
         const userInfo = await getUser(user);
