@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { setUserPoints } = require("../../utility");
+const { getUser, setUserPoints } = require("../../utility");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,26 +9,14 @@ module.exports = {
         .addIntegerOption(option => option.setName("points").setDescription("Enter the amount of points for this user. (required)")),
 
 	async execute(interaction) {
-        const userid = interaction.options.getMentionable('user').user.id;
+        const user = interaction.options.getMentionable('user').user;
         const int = interaction.options.getInteger("points");
 
-        const response = await setUserPoints(userid, int);
+        const userInfo = await getUser(user);
+        const response = await setUserPoints(userInfo, int);
 
-        switch(typeof response) {
-            case "string":
-                await interaction.reply(response);
-                break;
-            case "boolean":
-                if(response === true) {
-                    if(int > 1 || int === 0 ) {
-                        await interaction.reply(`<@${userid}> now has ${int} points!`);
-                    } else {
-                        await interaction.reply(`<@${userid}> now has 1 point!`);
-                    }
-                }
-                break;
-            default:
-                await interaction.reply(`There was an error. Yell at sappy about it.`);
-        }
+        if(response) {
+            await interaction.reply(response)
+        } 
 	},
 };
