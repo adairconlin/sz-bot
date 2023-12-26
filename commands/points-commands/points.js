@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { getUserPoints } = require("../../utility");
+const { getUser, getUserPoints } = require("../../utility");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,26 +9,19 @@ module.exports = {
 
 	async execute(interaction) {
         const mentionable = interaction.options.getMentionable('user');
-        let userid;
+        let user;
 
         if(mentionable?.user) {
-            userid = mentionable.user.id; // search for mentioned user in command
+            user = mentionable.user; // user mentioned in the command
         } else {
-            userid = interaction.user.id; // search for user who sent command
+            user = interaction.user; // user who sent the command
         }
 
-        const response = await getUserPoints(userid);
+        const userInfo = await getUser(user);
+        const response = getUserPoints(userInfo);
 
-        switch(typeof response) {
-            case "string":
-                await interaction.reply(response);
-                break;
-            case "object":
-                await interaction.reply(`<@${userid}>\n\`Available Points: ${response[0]}\` \n\`Leaderboard Points: ${response[1]}\``);
-                break;
-            default:
-                await interaction.reply("There was an error. Yell at sappy about it.");
-                break;
-        }
+        if(response) {
+            await interaction.reply(response)
+        } 
 	}
 };

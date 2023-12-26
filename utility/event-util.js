@@ -1,6 +1,6 @@
 // Commands for interacting with channels and users in the database
 const { ScanChannel, Clone, AutoPoints } = require("../schemas");
-const { addToDatabase } = require("./create-user");
+const { addToDatabase } = require("./user-util");
 const { giveUserPoints } = require("./points-util");
 require("dotenv").config();
 

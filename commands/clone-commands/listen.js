@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { cloneCommandFilter } = require("../../db-controllers");
+const { cloneCommandFilter } = require("../../database-controllers");
 
 module.exports = {
 	data: new SlashCommandBuilder()

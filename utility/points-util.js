@@ -1,17 +1,15 @@
 // Commands for interacting with points in the database
 const { User } = require("../schemas");
-const { addToDatabase } = require("./create-user");
+const { addToDatabase } = require("./user-util");
 let value;
 
-const getUserPoints = async id => {
-    const findUser = await User.find({ discordId: id });
-    if(!findUser.length) {
-        return "User not found."; // Valid scenario
+const getUserPoints = user => {
+    if(user != null && user.length > 0) {
+        userPts = [ user[0]?.pointsAvail, user[0]?.pointsAmt ];
+        return `<@${user[0].discordId}>\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
+    } else {
+        return "There was an issue finding user data. Please let Sappy know so she can fix it. :-)"
     }
-
-    let arr = [ findUser[0]?.pointsAvail, findUser[0]?.pointsAmt ];
-
-    return arr;
 }
 
 const setUserPoints = async (id, int) => {
