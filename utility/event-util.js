@@ -1,8 +1,9 @@
 // Commands for interacting with channels and users in the database
 const { ScanChannel, Clone, AutoPoints } = require("../schemas");
-const { addToDatabase } = require("./user-util");
-const { giveUserPoints } = require("./points-util");
+const { getUser, addToDatabase } = require("./user-util");
+const { givePoints } = require("./points-util");
 require("dotenv").config();
+let errorResponse = "There was an issue finding user data. Please let Sappy know so she can fix it. :-)";
 
 const checkForScanChannels = async message => {
     const getScanChannels = await ScanChannel.find({ id: process.env.ENV_ID });
@@ -24,8 +25,10 @@ const checkForCloneChannels = async message => {
 
 const checkForAutoPointChannels = async message => {
     const getAutoPointChannels = await AutoPoints.find({ channelId: message.channelId });
+
     if(getAutoPointChannels.length) {
-        checkForReq(message, message.author.id, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
+        const response = await rewardUser(message, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
+        message.reply(response);
     }
 }
 
@@ -85,36 +88,27 @@ const cloneMessage = async (msg, bufferCloneId) => {
 }
 
 
-const checkForReq = async (msg, id, pts, rq) => {
-    switch(rq) {
+const rewardUser = async (message, reward, requirement) => {
+    const userInfo = await getUser(message.author);
+    let response;
+
+    switch(requirement) {
         case null:
-            rewardUser(msg, id, pts);
+            response = await givePoints(userInfo, reward);
             break;
         default:
-            if(msg.attachments.size) {
-                rewardUser(msg, id, pts);
+            if(message.attachments.size) {
+                response = await givePoints(userInfo, reward);
             }
             break;
     }
-}
 
-const rewardUser = async (msg, id, pts) => {
-    const response = await giveUserPoints(id, pts);
-
-    switch(typeof response) {
-        case "string":
-            msg.reply(response);
-            break;
-        case "boolean":
-            if(response === true && pts > 1) {
-                await msg.reply(`<@${msg.author.id}> was rewarded ${pts} points!`);
-            } else if(response === true) {
-                await msg.reply(`<@${msg.author.id}> was rewarded 1 point!`);
-            }
-            break;
-        default:
-            await msg.reply("There was an error. Yell at sappy about it.");
-            break;
+    if(response != errorResponse) {
+        const pointResp = response.toString().replace(`\n`, ` was rewarded ${reward} point!\n`);
+        const pointsResp = response.toString().replace(`\n`, ` was rewarded ${reward} points!\n`);
+        return reward > 1 ? pointsResp : pointResp;
+    } else {
+        return errorResponse;
     }
 }
 

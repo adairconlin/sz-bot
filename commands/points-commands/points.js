@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { getUser, getUserPoints } = require("../../utility");
+const { getUser, getPoints } = require("../../utility");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -18,7 +18,7 @@ module.exports = {
         }
 
         const userInfo = await getUser(user);
-        const response = getUserPoints(userInfo);
+        const response = getPoints(userInfo);
 
         if(response) {
             await interaction.reply(response)

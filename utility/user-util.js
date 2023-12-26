@@ -17,7 +17,6 @@ const getUser = async (user) => {
 * Creates User and returns User object.
 */
 const createUser = async (user) => {
-    console.log("creating user...");
     let userArr = [];
     const newUser = {
         username: user.username,
