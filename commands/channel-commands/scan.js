@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { scanChannelCheck } = require("../db-controllers");
+const { scanChannelCheck } = require("../../db-controllers");
 
 module.exports = {
 	data: new SlashCommandBuilder()

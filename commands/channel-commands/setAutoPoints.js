@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { checkAutoPointsChannel } = require("../db-controllers");
+const { checkAutoPointsChannel } = require("../../db-controllers");
 
 module.exports = {
 	data: new SlashCommandBuilder()

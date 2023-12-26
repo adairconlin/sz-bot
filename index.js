@@ -12,13 +12,17 @@ const client = new Client({
 //COMMAND PATHING
 client.commands = new Collection;
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+const commandFolders = fs.readdirSync(commandsPath)
+    .filter(file => fs.statSync(path.join(commandsPath, file)).isDirectory());
 
-for(const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
-
-    client.commands.set(command.data.name, command);
+for(const folder of commandFolders) {
+    const folderPath = path.join(__dirname, "commands", folder);
+    const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"));
+    commandFiles.forEach(file => {
+        const filePath = path.join(__dirname, "commands", folder, file);
+        const command = require(filePath);
+        client.commands.set(command.data.name, command);
+    });
 }
 
 //EVENT PATHING
