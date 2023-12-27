@@ -1,6 +1,6 @@
 // Commands for interacting with channels and users in the database
 const { ScanChannel, Clone, AutoPoints } = require("../schemas");
-const { getUser, addToDatabase } = require("./user-util");
+const { getUser } = require("./user-util");
 const { givePoints } = require("./points-util");
 require("dotenv").config();
 
@@ -9,7 +9,7 @@ const checkForScanChannels = async message => {
 
     for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
         if(getScanChannels[0]?.channels[i] === message.channelId) {
-            addToDatabase(message, message.author);
+            getUser(message.author);
         }
     }
 }
@@ -29,6 +29,24 @@ const checkForAutoPointChannels = async message => {
         const response = await rewardUser(message, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
         message.reply(response);
     }
+}
+
+const rewardUser = async (message, reward, requirement) => {
+    const userInfo = await getUser(message.author);
+    let response;
+
+    switch(requirement) {
+        case null:
+            response = await givePoints(userInfo, reward);
+            break;
+        default:
+            if(message.attachments.size) {
+                response = await givePoints(userInfo, reward);
+            }
+            break;
+    }
+
+    return response;
 }
 
 const cloneMessage = async (msg, bufferCloneId) => {
@@ -86,23 +104,4 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
-
-const rewardUser = async (message, reward, requirement) => {
-    const userInfo = await getUser(message.author);
-    let response;
-
-    switch(requirement) {
-        case null:
-            response = await givePoints(userInfo, reward);
-            break;
-        default:
-            if(message.attachments.size) {
-                response = await givePoints(userInfo, reward);
-            }
-            break;
-    }
-
-    return response;
-}
-
-module.exports = { addToDatabase, checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
+module.exports = { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
