@@ -1,20 +1,10 @@
 // Commands for interacting with channels and users in the database
-const { ScanChannel, Clone, AutoPoints } = require("../schemas");
-const { addToDatabase } = require("./crud-user");
-const { giveUserPoints } = require("./points-util");
+const { Clone, AutoPoints } = require("../schemas");
+const { getUser } = require("./user-util");
+const { givePoints } = require("./points-util");
 require("dotenv").config();
 
-const checkForScanChannels = async message => {
-    const getScanChannels = await ScanChannel.find({ id: process.env.ENV_ID });
-
-    for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
-        if(getScanChannels[0]?.channels[i] === message.channelId) {
-            addToDatabase(message, message.author);
-        }
-    }
-}
-
-const checkForCloneChannels = async message => {
+const checkIfCloneChannel = async message => {
     const getCloneId = await Clone.find({ id: process.env.ENV_ID });
 
     if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
@@ -22,11 +12,33 @@ const checkForCloneChannels = async message => {
     }
 }
 
-const checkForAutoPointChannels = async message => {
+const checkIfAutoPointChannel = async message => {
     const getAutoPointChannels = await AutoPoints.find({ channelId: message.channelId });
+
     if(getAutoPointChannels.length) {
-        checkForReq(message, getAutoPointChannels[0]);
+        const response = await rewardUser(message, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
+        response != null && message.reply(response);
     }
+}
+
+const rewardUser = async (message, reward, requirement) => {
+    const userInfo = await getUser(message.author);
+    let response;
+
+    switch(requirement) {
+        case null:
+            response = await givePoints(userInfo, reward);
+            break;
+        default:
+            if(message.attachments.size) {
+                response = await givePoints(userInfo, reward);
+            } else {
+                response = null;
+            }
+            break;
+    }
+
+    return response;
 }
 
 const cloneMessage = async (msg, bufferCloneId) => {
@@ -84,37 +96,4 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
-    const checkForReq = async (msg, req) => {
-    switch(req.requirement) {
-        case null:
-            rewardUser(msg, msg.author, req.repAmt);
-            break;
-        default:
-            if(msg.attachments.size) {
-                rewardUser(msg, msg.author, req.repAmt);
-            }
-            break;
-    }
-}
-
-const rewardUser = async (msg, user, pts) => {
-    const response = await giveUserPoints(msg, user, pts);
-
-    switch(typeof response) {
-        case "string":
-            await msg.reply(response);
-            break;
-        case "boolean":
-            if(response === true && pts > 1) {
-                await msg.reply(`<@${user.id}> was rewarded ${pts} points!`);
-            } else if(response === true) {
-                await msg.reply(`<@${user.id}> was rewarded 1 point!`);
-            }
-            break;
-        default:
-            await msg.reply(`There was an error rewarding <@${user.id}> ${pts} point(s). Please fix this <@${process.env.SAPPY_ID}>.`);
-            break;
-    }
-}
-
-module.exports = { addToDatabase, checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
+module.exports = { checkIfCloneChannel, checkIfAutoPointChannel };

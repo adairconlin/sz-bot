@@ -6,12 +6,18 @@ require("dotenv").config();
 
 const commands = []
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+const commandFolders = fs.readdirSync(commandsPath)
+    .filter(file => fs.statSync(path.join(commandsPath, file)).isDirectory());
 
-for(const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
-    commands.push(command.data.toJSON());
+for(const folder of commandFolders) {
+    const folderPath = path.join(__dirname, "commands", folder);
+    const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith(".js"))
+    commandFiles.forEach(file => {
+        console.log(file);
+        const filePath = path.join(__dirname, "commands", folder, file);
+        const command = require(filePath);
+        commands.push(command.data.toJSON())
+    });
 }
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
