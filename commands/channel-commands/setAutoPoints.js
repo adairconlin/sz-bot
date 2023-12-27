@@ -18,12 +18,7 @@ module.exports = {
 
         const response = await checkAutoPointsChannel(int, channelId, requirement);
         
-        let caseHandle;
-        if(int > 1 || int === 0) {
-            caseHandle = "points"
-        } else {
-            caseHandle = "point"
-        };
+        let caseHandle = int > 1 ? "points" : "point";
 
         switch(typeof response) {
             case "string":

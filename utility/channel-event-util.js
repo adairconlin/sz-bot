@@ -4,7 +4,7 @@ const { getUser } = require("./user-util");
 const { givePoints } = require("./points-util");
 require("dotenv").config();
 
-const checkForScanChannels = async message => {
+const checkIfScanChannel = async message => {
     const getScanChannels = await ScanChannel.find({ id: process.env.ENV_ID });
 
     for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
@@ -14,7 +14,7 @@ const checkForScanChannels = async message => {
     }
 }
 
-const checkForCloneChannels = async message => {
+const checkIfCloneChannel = async message => {
     const getCloneId = await Clone.find({ id: process.env.ENV_ID });
 
     if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
@@ -22,7 +22,7 @@ const checkForCloneChannels = async message => {
     }
 }
 
-const checkForAutoPointChannels = async message => {
+const checkIfAutoPointChannel = async message => {
     const getAutoPointChannels = await AutoPoints.find({ channelId: message.channelId });
 
     if(getAutoPointChannels.length) {
@@ -104,4 +104,4 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
-module.exports = { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
+module.exports = { checkIfScanChannel, checkIfCloneChannel, checkIfAutoPointChannel };

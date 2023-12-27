@@ -41,7 +41,7 @@ const setPoints = async (user, int) => {
 }
 
 // Used by give.js
-// Used by checkForAutoPointChannels in channel-event-util.js
+// Used by checkIfAutoPointChannel in channel-event-util.js
 const givePoints = async (user, int) => {
     let response;
     if(!int) {
