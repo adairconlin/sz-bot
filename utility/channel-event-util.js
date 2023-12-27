@@ -1,18 +1,8 @@
 // Commands for interacting with channels and users in the database
-const { ScanChannel, Clone, AutoPoints } = require("../schemas");
+const { Clone, AutoPoints } = require("../schemas");
 const { getUser } = require("./user-util");
 const { givePoints } = require("./points-util");
 require("dotenv").config();
-
-const checkIfScanChannel = async message => {
-    const getScanChannels = await ScanChannel.find({ id: process.env.ENV_ID });
-
-    for(let i = 0; i < getScanChannels[0]?.channels.length; i++) {
-        if(getScanChannels[0]?.channels[i] === message.channelId) {
-            getUser(message.author);
-        }
-    }
-}
 
 const checkIfCloneChannel = async message => {
     const getCloneId = await Clone.find({ id: process.env.ENV_ID });
@@ -27,7 +17,7 @@ const checkIfAutoPointChannel = async message => {
 
     if(getAutoPointChannels.length) {
         const response = await rewardUser(message, getAutoPointChannels[0].repAmt, getAutoPointChannels[0].requirement);
-        message.reply(response);
+        response != null && message.reply(response);
     }
 }
 
@@ -42,6 +32,8 @@ const rewardUser = async (message, reward, requirement) => {
         default:
             if(message.attachments.size) {
                 response = await givePoints(userInfo, reward);
+            } else {
+                response = null;
             }
             break;
     }
@@ -104,4 +96,4 @@ const cloneMessage = async (msg, bufferCloneId) => {
         .catch(console.error);
 }
 
-module.exports = { checkIfScanChannel, checkIfCloneChannel, checkIfAutoPointChannel };
+module.exports = { checkIfCloneChannel, checkIfAutoPointChannel };

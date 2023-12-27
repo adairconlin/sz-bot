@@ -1,5 +1,4 @@
 const { 
-    checkIfScanChannel, 
     checkIfCloneChannel, 
     checkIfAutoPointChannel 
 } = require("../utility");
@@ -9,10 +8,7 @@ module.exports = {
     name: "messageCreate",
     async execute(message) {
         if(message.author.bot) return;
-
-        //checking for necessary database events
-        checkIfScanChannel(message);
-
+        
         // checking for necessary clone events
         checkIfCloneChannel(message);
 

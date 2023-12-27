@@ -21,7 +21,6 @@ const setUpAutoPoints = async (points, channel, requirement) => {
 }
 
 const createAutoPointsChannel = async (points, channel, requirement) => {
-    console.log("in createautopointschannel")
     const newChannel = {
         channelId: channel,
         repAmt: points,
