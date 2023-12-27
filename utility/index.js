@@ -1,4 +1,6 @@
-const { getUserPoints, setUserPoints, giveUserPoints, takeUserPoints } = require("./points-util");
-const { checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels } = require("./event-util");
 
-module.exports = { getUserPoints, setUserPoints, giveUserPoints, takeUserPoints, checkForScanChannels, checkForCloneChannels, checkForAutoPointChannels };
+const { getUser } = require("./user-util");
+const { getPoints, setPoints, givePoints, takePoints } = require("./points-util");
+const {  checkIfCloneChannel, checkIfAutoPointChannel } = require("./channel-event-util");
+
+module.exports = { getUser, getPoints, setPoints, givePoints, takePoints, checkIfCloneChannel, checkIfAutoPointChannel };

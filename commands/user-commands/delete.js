@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { User } = require("../schemas");
+const { User } = require("../../schemas");
 require("dotenv").config();
 
 module.exports = {

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder,  ButtonStyle, EmbedBuilder } = require("discord.js");
-const { User } = require("../schemas");
+const { User } = require("../../schemas");
 const Pagination = require("customizable-discordjs-pagination");
 
 module.exports = {

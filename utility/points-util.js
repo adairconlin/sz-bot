@@ -1,94 +1,110 @@
 // Commands for interacting with points in the database
 const { User } = require("../schemas");
-const { addToDatabase } = require("./crud-user");
-require("dotenv").config();
-let value;
+let errorResponse = "There was an issue finding user data. Please let Sappy know so she can fix it. :-)";
 
-const getUserPoints = async id => {
-    const findUser = await User.find({ discordId: id });
-    if(!findUser.length) {
-        return "User not found."; // Valid scenario
-    }
-
-    let arr = [ findUser[0]?.pointsAvail, findUser[0]?.pointsAmt ];
-
-    return arr;
-}
-
-const setUserPoints = async (id, int) => {
-    if(!int || !id) {
-        return "Please define both fields for this command.";
-    } else if(int < 0) {
-        return "Please define a number of points higher than 0.";
-    }
-
-    const findUser = await User.find({ discordId: id });
-    if(!findUser.length) {
-        return "User not found."; //add to database
-    }
-
-    await User.updateOne({ discordId: id },
-        { 
-            pointsAmt: int 
-        }
-    )
-        .then(() => { value = true; })
-        .catch(err => { console.log(err); value = false;  });
-
-    return value;
-}
-
-/*
-* Return true upon successful update
-* Return false upon failure to update specified user
-* Return string of error message if missing a parameter or if
-* there was an error adding a new user to database
-*/
-const giveUserPoints = async (interaction, user, int) => {
-    if(!user || !int) {
-        return "Please define both fields for this command.";
-    } else if(int < 1) {
-        return "Please define a number of points higher than 0.";
-    }
-
-    const findUser = addToDatabase(interaction, user, int);
-
-    if(!findUser) {
-        return `Error in finding or adding user to database. Yell at <@${process.env.SAPPY_ID}>.`
+// Used by points.js
+const getPoints = user => {
+    if(user != null && user.length > 0) {
+        userPts = [ user[0]?.pointsAvail, user[0]?.pointsAmt ];
+        return `<@${user[0].discordId}>\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
     } else {
-        value = findUser;
+        return errorResponse;
     }
-    
-    return value;
 }
 
-const takeUserPoints = async (id, int) => {
-    if(!id || !int) {
-        return "Please define both fields for this command.";
-    } else if(int < 1) {
-        return "Please define a number of points higher than 0.";
+// Used by set.js
+const setPoints = async (user, int) => {
+    let response;
+    if(!int) {
+        return "Please define the point field for this command.";
+    } else if(int < 0) {
+        return "Please define a number of points higher than 0. >:-(";
+    } else if(user == null || user.length < 1) {
+        return errorResponse;
     }
 
-    const findUser = await User.find({ discordId: id });
-    if(!findUser.length) {
-        return "This user is not registered."; // valid scenario
+    await User.updateOne({ discordId: user[0].discordId },
+        {  
+            pointsAmt: int 
+        })
+        .then(() => {
+            userPts = [ user[0]?.pointsAvail, int ];
+            response = `<@${user[0].discordId}> now has ${int} points!\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
+        })
+        .catch(err => { 
+            console.log(err); 
+            response = errorResponse; 
+        });
+
+    return response;
+}
+
+// Used by give.js
+// Used by checkIfAutoPointChannel in channel-event-util.js
+const givePoints = async (user, int) => {
+    let response;
+    if(!int) {
+        return "Please define the point field for this command.";
+    } else if(int < 0) {
+        return "Please define a number of points higher than 0. >:-(";
+    } else if(user == null || user.length < 1) {
+        return errorResponse;
     }
 
-    if(findUser?.pointsAvail - int < 0) {
+    await User.updateOne({ discordId: user[0].discordId },
+        {
+            $inc: {
+                pointsAmt: int,
+                pointsAvail: int
+            }
+        })
+        .then(() => {
+            userPts = [ user[0]?.pointsAvail + int, user[0]?.pointsAmt + int ];
+            pluralCheck = int > 1 ? "points" : "point"
+            response = `<@${user[0].discordId}> was rewarded ${int} ${pluralCheck}!\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``;
+        })
+        .catch(err => { 
+            console.log(err); 
+            response = errorResponse;  
+        });
+
+    return response;
+}
+
+// Used by take.js
+const takePoints = async (user, int) => {
+    let response;
+    if(!int) {
+        return "Please define the point field for this command.";
+    } else if(int < 0) {
+        return "Please define a number of points higher than 0. >:-(";
+    } else if(user == null || user.length < 1) {
+        return errorResponse;
+    }
+
+    if(user[0]?.pointsAvail - int < 0) {
         return "Users cannot have negative points.";
     }
 
-    await User.updateOne({ discordId: id },
+    await User.updateOne({ discordId: user[0].discordId },
         {
             $inc: {
                 pointsAvail: -int
             }
         }
     )
-        .then(() => { value = true })
-        .catch(err => { console.log(err); value = false; });
+        .then(() =>  {
+            userPts = [ user[0]?.pointsAvail - int, user[0]?.pointsAmt - int ];
+            pluralCheck = int > 1 ? "points" : "point";
+            response = `<@${user[0].discordId}> lost ${int} ${pluralCheck}...\n\`Available Points: ${userPts[0]}\` \n\`Leaderboard Points: ${userPts[1]}\``
+        })
+        .catch(err => { 
+            console.log(err); 
+            response = errorResponse; 
+        });
     
-    return value;
+    return response;
+    
 }
 
-module.exports = { getUserPoints, setUserPoints, giveUserPoints, takeUserPoints };
+module.exports = { getPoints, setPoints, givePoints, takePoints };

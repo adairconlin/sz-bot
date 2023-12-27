@@ -5,8 +5,7 @@ const cloneCommandFilter = async (cmd, channelId) => {
     // look for existing schema
     const result = await Clone.find({ id: process.env.ENV_ID });
 
-    // if there is no schema, create one
-    // then call the next function
+    // if there is no schema: create one, then call the next function
     if(!result.length) {
         const newChannels = {
             id: process.env.ENV_ID
