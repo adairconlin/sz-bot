@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { checkAutoPointsChannel } = require("../../database-controllers");
+const { setUpAutoPoints } = require("../../database-controllers");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,23 +16,10 @@ module.exports = {
         const int = interaction.options.getInteger("points");
         const requirement = interaction.options.getString("requirement");
 
-        const response = await checkAutoPointsChannel(int, channelId, requirement);
-        
-        let caseHandle = int > 1 ? "points" : "point";
+        const response = await setUpAutoPoints(int, channelId, requirement);
 
-        switch(typeof response) {
-            case "string":
-                await interaction.reply(response);
-                break;
-            case "boolean":
-                if(response && requirement) {
-                    await interaction.reply(`Channel is set to reward ${int} ${caseHandle} when a user posts an image!`);
-                } else if(response && !requirement) {
-                    await interaction.reply(`Channel is set to reward ${int} ${caseHandle}!`);
-                }
-                break;
-            default:
-                await interaction.reply("There was an error. Yell at sappy about it.");
+        if(response) {
+            await interaction.reply(response);
         }
 	},
 };

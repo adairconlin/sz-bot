@@ -1,6 +1,5 @@
 // Commands for interacting with points in the database
 const { User } = require("../schemas");
-let value;
 let errorResponse = "There was an issue finding user data. Please let Sappy know so she can fix it. :-)";
 
 // Used by points.js

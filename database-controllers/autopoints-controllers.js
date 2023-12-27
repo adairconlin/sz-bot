@@ -1,35 +1,45 @@
 const { AutoPoints } = require("../schemas");
 
-const checkAutoPointsChannel = async (int, id, rq) => {
-    if(!int) {
+const setUpAutoPoints = async (points, channel, requirement) => {
+    if(!points) {
         return "Please specify the amount of points to be rewarded in this channel.";
-    } else if(int < 1) {
+    } else if(points < 1) {
         return "Number of points cannot be lower than 1.";
     }
     
-    if(!rq) {
-        rq = null;
+    if(!requirement) {
+        requirement = null;
     }
 
-    const checkForChannel = AutoPoints.find({ channelId: id });
+    const checkForChannel = await AutoPoints.find({ channelId: channel });
     if(checkForChannel.length) {
-        AutoPoints.findOneAndDelete({ channelId: id });
+        // Allow for overwritting the current config for specified channel
+        await AutoPoints.findOneAndDelete({ channelId: channel });
     }
 
-    return setAutoPointsChannel(int, id, rq);
+    return createAutoPointsChannel(points, channel, requirement);
 }
 
-const setAutoPointsChannel = async (int, id, rq) => {
+const createAutoPointsChannel = async (points, channel, requirement) => {
+    console.log("in createautopointschannel")
     const newChannel = {
-        channelId: id,
-        repAmt: int,
-        requirement: rq,
+        channelId: channel,
+        repAmt: points,
+        requirement: requirement,
     }
 
-    // add new schema that stores auto point channels
-    await new AutoPoints(newChannel).save();
+    let message; 
+    await new AutoPoints(newChannel).save()
+    .then(() => {
+        let caseHandle = points > 1 ? "points" : "point";
+        message = requirement != null ? `Channel is set to reward ${points} ${caseHandle} when a user posts an image!` : `Channel is set to reward ${points} ${caseHandle}`;
+    })
+    .catch(err => {
+        console.log(err);
+        message = "There was an issue with the data. Please let Sappy know so she can fix it. :-)";
+    });
 
-    return true;
+    return message;
 }
 
-module.exports = { checkAutoPointsChannel };
+module.exports = { setUpAutoPoints };

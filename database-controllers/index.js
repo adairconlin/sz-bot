@@ -1,5 +1,5 @@
 const { cloneCommandFilter } = require("./clone-controllers");
 const { scanChannelCheck } = require("./scan-controllers");
-const { checkAutoPointsChannel } = require("./autopoints-controllers");
+const { setUpAutoPoints } = require("./autopoints-controllers");
 
-module.exports = { cloneCommandFilter, scanChannelCheck, checkAutoPointsChannel };
+module.exports = { cloneCommandFilter, scanChannelCheck, setUpAutoPoints };
