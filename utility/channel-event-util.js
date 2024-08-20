@@ -4,10 +4,23 @@ const { getUser } = require("./user-util");
 const { givePoints } = require("./points-util");
 require("dotenv").config();
 
+const removeMentions = async message => {
+    if(message.content.includes("@")) {
+        message.content = message.content.replaceAll("@", "@/");
+        if(message.mentions?.users?.size > 0) {
+            message.mentions?.users?.map(user => {
+                let identifier = user?.globalName ? user?.globalName : user?.username;
+                message.content = message.content.replace(`<@/${user?.id}>`, `@/${identifier}`);
+            });
+        }
+    }
+}
+
 const checkIfCloneChannel = async message => {
     const getCloneId = await Clone.find({ id: process.env.ENV_ID });
 
     if(message.channelId === getCloneId[0]?.cloneFromChannelId) {
+        removeMentions(message);
         cloneMessage(message, getCloneId[0]?.cloneToChannelId);
     }
 }
